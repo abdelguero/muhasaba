@@ -16,8 +16,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{color-scheme:light dark;
---bg:light-dark(#f5f7f3,#0d1714);--card:light-dark(#ffffff,#15221e);--ink:light-dark(#10221c,#e6eee9);--mute:light-dark(#5d6f68,#94a8a0);
---line:light-dark(#dfe6e1,#263832);--green:light-dark(#0f5a47,#3fae8a);--band:light-dark(#0f5a47,#0f3a2f);--gold:#d39b34;--rose:light-dark(#c4524a,#e07a70);--soft:light-dark(#e9f1ec,#1b2c26)}
+--bg:#f5f7f3;--card:#ffffff;--ink:#10221c;--mute:#5d6f68;--line:#dfe6e1;--green:#0f5a47;--band:#0f5a47;--gold:#d39b34;--rose:#c4524a;--soft:#e9f1ec}
+@media (prefers-color-scheme:dark){:root{--bg:#0d1714;--card:#15221e;--ink:#e6eee9;--mute:#94a8a0;--line:#263832;--green:#3fae8a;--band:#0f3a2f;--rose:#e07a70;--soft:#1b2c26}}
 *{box-sizing:border-box;min-width:0}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Readex Pro",system-ui,sans-serif;overflow-x:clip}
 .band{padding:clamp(20px,4vw,48px) max(5vw,16px)}
@@ -152,7 +152,8 @@ footer p{max-width:640px;margin:6px auto}.ar{font-size:20px}
 </footer>
 
 <script>
-{
+'use strict';
+(function(){
 const START='2026-11-19',N=40;
 const $=id=>document.getElementById(id);
 const pad=n=>String(n).padStart(2,'0');
@@ -315,7 +316,7 @@ $('installBtn').onclick=async()=>{if(!deferred)return;deferred.prompt();await de
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 
 all();drawCoach();drawTodos();drawRemarks();sync();
-}
+})();
 </script>
 </body>
 </html>

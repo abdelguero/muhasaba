@@ -149,6 +149,7 @@ footer p{max-width:640px;margin:6px auto}.ar{font-size:20px}
   <p><b>Version minimum :</b> Fajr dans son temps, même seul, même court. Si pas de mosquée, Isha à l'heure à la maison. Jamais deux jours ratés de suite.</p>
   <p class="ar" lang="ar" dir="rtl">اللَّهُمَّ أَعِنِّي عَلَى ذِكْرِكَ وَشُكْرِكَ وَحُسْنِ عِبَادَتِكَ</p>
   <p class="small">Ô Allah, aide-moi à T'évoquer, à Te remercier et à bien T'adorer.</p>
+  <p class="small">Version 3</p>
 </footer>
 
 <script>
@@ -313,7 +314,7 @@ if(!standalone){
 }
 addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferred=e;$('installBtn').style.display='inline-block'});
 $('installBtn').onclick=async()=>{if(!deferred)return;deferred.prompt();await deferred.userChoice;deferred=null;$('installBtn').style.display='none'};
-if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).catch(()=>{});
 
 all();drawCoach();drawTodos();drawRemarks();sync();
 })();

@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Muhasaba – 40 jours</title>
+<meta name="theme-color" content="#0f5a47">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Muhasaba">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:light dark;
+--bg:light-dark(#f5f7f3,#0d1714);--card:light-dark(#ffffff,#15221e);--ink:light-dark(#10221c,#e6eee9);--mute:light-dark(#5d6f68,#94a8a0);
+--line:light-dark(#dfe6e1,#263832);--green:light-dark(#0f5a47,#3fae8a);--band:light-dark(#0f5a47,#0f3a2f);--gold:#d39b34;--rose:light-dark(#c4524a,#e07a70);--soft:light-dark(#e9f1ec,#1b2c26)}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Readex Pro",system-ui,sans-serif;overflow-x:clip}
+.band{padding:clamp(20px,4vw,48px) max(5vw,16px)}
+header.band{background:var(--band);color:#f3f7f4;padding-top:max(env(safe-area-inset-top),20px)}
+.top{max-width:1240px;margin:auto;display:flex;flex-wrap:wrap;gap:10px 28px;align-items:end;justify-content:space-between}
+h1{font-size:clamp(26px,5vw,42px);line-height:1.05;margin:0;font-weight:600;text-wrap:balance}
+.sub{opacity:.85;margin:6px 0 0;font-size:15px}
+.jour{font-size:clamp(40px,8vw,60px);font-weight:300;line-height:1;white-space:nowrap}.jour small{font-size:18px;opacity:.7}
+.sync{max-width:1240px;margin:10px auto 0;font-size:13px;opacity:.85}
+.beads{max-width:1240px;margin:20px auto 0;display:grid;grid-template-columns:repeat(20,minmax(0,1fr));gap:8px 6px}
+.bead{aspect-ratio:1;border-radius:50%;border:2px solid rgba(255,255,255,.28);background:transparent;padding:0;cursor:pointer}
+.bead.full{background:radial-gradient(circle at 35% 30%,#fff6 0,transparent 45%),var(--gold);border-color:var(--gold)}
+.bead.half{background:linear-gradient(90deg,var(--gold) 50%,transparent 50%);border-color:var(--gold)}
+.bead.miss{border-color:#f0948b;background:#f0948b33}
+.bead.todo{border-style:dashed;border-color:rgba(255,255,255,.55)}
+.bead.today{outline:3px solid #fff;outline-offset:2px}
+.bead.sel{box-shadow:0 0 0 3px #f3f7f4 inset}
+.legend{max-width:1240px;margin:12px auto 0;display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;opacity:.85}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:6px;vertical-align:-1px;border:2px solid var(--gold)}
+main{max-width:1240px;margin:auto;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:22px}
+@media(max-width:860px){main{grid-template-columns:minmax(0,1fr)}.beads{grid-template-columns:repeat(10,minmax(0,1fr))}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:clamp(18px,3vw,26px);margin-bottom:22px}
+h2{font-size:21px;margin:0 0 4px;font-weight:600}
+.hint{color:var(--mute);font-size:14px;margin:0 0 14px}
+.nav{display:flex;align-items:center;gap:10px;margin-bottom:16px}.nav b{flex:1;text-align:center;font-weight:500}
+.btn{font:inherit;min-height:44px;padding:8px 16px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+.btn:disabled{opacity:.35}
+.btn.pri{background:var(--green);color:#fff;border-color:var(--green)}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.alarm{background:var(--soft);border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:15px}
+.q{padding:13px 0;border-top:1px solid var(--line)}
+.q p{margin:0 0 9px;font-weight:500}.q p span{font-weight:400;color:var(--mute);font-size:14px}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opt{font:inherit;font-size:15px;min-height:44px;padding:8px 14px;border-radius:999px;border:1.5px solid var(--line);background:transparent;color:var(--ink);cursor:pointer}
+.opt[aria-pressed=true].ok{background:var(--green);border-color:var(--green);color:#fff}
+.opt[aria-pressed=true].mid{background:var(--gold);border-color:var(--gold);color:#241a06}
+.opt[aria-pressed=true].ko{background:var(--rose);border-color:var(--rose);color:#fff}
+textarea,input{width:100%;font:inherit;font-size:16px;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);resize:vertical}
+.saved{font-size:13px;color:var(--mute);min-height:20px;margin-top:6px}
+.stat{margin:12px 0}.stat .row{display:flex;justify-content:space-between;gap:10px;font-size:15px}.stat .row b{white-space:nowrap}
+.bar{height:12px;background:var(--soft);border-radius:999px;position:relative;overflow:hidden;margin-top:6px}
+.bar>div{height:100%;background:var(--green);border-radius:999px;transition:width .4s}
+.bar>em{position:absolute;top:0;bottom:0;width:2px;background:var(--ink);opacity:.5}
+.small{font-size:14px;color:var(--mute);margin:4px 0 0}
+.msg{border-left:3px solid var(--gold);padding:4px 0 4px 14px;margin:14px 0}
+.msg h3{font-size:16px;margin:0;font-weight:600}.msg time{font-size:13px;color:var(--mute)}.msg p{margin:6px 0 0;white-space:pre-line}
+.todo{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--line)}
+.todo input{width:22px;height:22px;margin-top:2px;accent-color:var(--green);flex:none;padding:0}
+.todo.done span{text-decoration:line-through;color:var(--mute)}.todo small{display:block;color:var(--mute);font-size:13px}
+.wk{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:10px 0 12px}
+.wk div{background:var(--soft);border-radius:12px;padding:10px;text-align:center}.wk b{display:block;font-size:24px;font-weight:600}.wk span{font-size:13px;color:var(--mute)}
+label.l{display:block;font-size:14px;font-weight:500;margin:12px 0 6px}
+.warn{background:var(--rose);color:#fff;padding:10px 14px;border-radius:10px;max-width:1240px;margin:0 auto 16px;display:none}
+.install{display:none}
+footer.band{background:var(--soft);text-align:center;padding-bottom:max(env(safe-area-inset-bottom),24px)}
+footer p{max-width:640px;margin:6px auto}.ar{font-size:20px}
+@media (prefers-reduced-motion:reduce){.bar>div{transition:none}}
+</style>
+</head>
+<body>
+<header class="band">
+  <div class="top">
+    <div><h1>Mes 40 jours de muhasaba</h1><p class="sub">Fajr à l'heure · Isha à la mosquée · 19 nov. → 28 déc. 2026</p></div>
+    <div class="jour" id="jour">J— <small>/ 40</small></div>
+  </div>
+  <div class="sync" id="sync"></div>
+  <div class="beads" id="beads" aria-label="Les 40 jours"></div>
+  <div class="legend"><span><i style="background:var(--gold)"></i>Fajr + Isha mosquée</span><span><i style="background:linear-gradient(90deg,var(--gold) 50%,transparent 50%)"></i>Un des deux</span><span><i style="border-color:#f0948b;background:#f0948b33"></i>Raté</span><span><i style="border:2px dashed #fff8"></i>À remplir</span></div>
+</header>
+
+<div class="band" style="padding-bottom:0"><div class="warn" id="warn"></div></div>
+
+<main class="band" style="padding-top:0">
+  <section>
+    <div class="card" id="dayCard">
+      <h2>Fiche du jour</h2>
+      <p class="hint">À cocher chaque soir avant de dormir (5 minutes).</p>
+      <div class="nav"><button class="btn" id="prev" aria-label="Jour précédent">‹</button><b id="dlabel"></b><button class="btn" id="next" aria-label="Jour suivant">›</button></div>
+      <div class="alarm" id="alarm"></div>
+      <div id="qs"></div>
+      <label class="l" for="note">Remarque du jour (cause d'un raté, ressenti, question)</label>
+      <textarea id="note" rows="3" placeholder="Ex. : couché à minuit, réveil difficile…"></textarea>
+      <div class="saved" id="saved"></div>
+    </div>
+
+    <div class="card">
+      <h2>Bilan du vendredi</h2>
+      <p class="hint" id="wkHint"></p>
+      <div class="nav"><button class="btn" id="wprev" aria-label="Semaine précédente">‹</button><b id="wlabel"></b><button class="btn" id="wnext" aria-label="Semaine suivante">›</button></div>
+      <div class="wk" id="wkStats"></div>
+      <label class="l" for="wgood">Ce qui a marché</label><textarea id="wgood" rows="2"></textarea>
+      <label class="l" for="wadj">Un seul ajustement pour la semaine prochaine</label><textarea id="wadj" rows="2"></textarea>
+      <label class="l">Score envoyé à mon binôme ?</label><div class="opts" id="wbin"></div>
+      <div class="saved" id="wsaved"></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="card"><h2>Où j'en suis</h2><div id="stats"></div></div>
+    <div class="card"><h2>Mot du coach</h2><p class="hint">Mis à jour par Claude après lecture de tes fiches.</p><div id="coach"></div></div>
+    <div class="card"><h2>À faire</h2><div id="todos"></div></div>
+    <div class="card">
+      <h2>Écrire au coach</h2>
+      <p class="hint">Une difficulté, une idée à ajouter au plan : je la lis au prochain passage.</p>
+      <textarea id="rq" rows="3"></textarea>
+      <div style="display:flex;gap:10px;align-items:center;margin-top:10px"><button class="btn pri" id="rqSend">Envoyer</button><span class="saved" id="rqSaved" style="margin:0"></span></div>
+      <div id="rqList"></div>
+    </div>
+    <div class="card install" id="installCard">
+      <h2>Installer l'application</h2>
+      <p class="hint" id="installTxt"></p>
+      <button class="btn pri" id="installBtn" style="display:none">Installer</button>
+    </div>
+    <div class="card">
+      <details id="cfgBox">
+        <summary style="cursor:pointer;font-weight:600;font-size:18px;min-height:32px">Connexion à tes données (GitHub)</summary>
+        <p class="hint" style="margin-top:10px">Tes fiches sont enregistrées dans ton dépôt privé. Le jeton reste uniquement sur cet appareil.</p>
+        <label class="l" for="cOwner">Compte</label><input id="cOwner" autocomplete="off">
+        <label class="l" for="cRepo">Dépôt privé</label><input id="cRepo" autocomplete="off">
+        <label class="l" for="cToken">Jeton (fine-grained, Contents : read and write)</label><input id="cToken" type="password" autocomplete="off" placeholder="github_pat_…">
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px"><button class="btn pri" id="cSave">Tester et enregistrer</button><button class="btn" id="cForget">Oublier le jeton</button></div>
+        <div class="saved" id="cMsg"></div>
+      </details>
+    </div>
+  </section>
+</main>
+
+<footer class="band">
+  <p><b>Version minimum :</b> Fajr dans son temps, même seul, même court. Si pas de mosquée, Isha à l'heure à la maison. Jamais deux jours ratés de suite.</p>
+  <p class="ar" lang="ar" dir="rtl">اللَّهُمَّ أَعِنِّي عَلَى ذِكْرِكَ وَشُكْرِكَ وَحُسْنِ عِبَادَتِكَ</p>
+  <p class="small">Ô Allah, aide-moi à T'évoquer, à Te remercier et à bien T'adorer.</p>
+</footer>
+
+<script>
+{
+const START='2026-11-19',N=40;
+const $=id=>document.getElementById(id);
+const pad=n=>String(n).padStart(2,'0');
+const iso=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const addDays=(s,k)=>{const d=new Date(s+'T12:00:00');d.setDate(d.getDate()+k);return iso(d)};
+const idx=s=>Math.round((new Date(s+'T12:00:00')-new Date(START+'T12:00:00'))/864e5)+1;
+const fmt=s=>new Date(s+'T12:00:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+const esc=t=>String(t??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const TODAY=iso(new Date());
+const tIdx=Math.min(Math.max(idx(TODAY),1),N);
+let sel=addDays(START,tIdx-1);
+
+const Q=[
+ {k:'fajr',t:'Fajr',s:'prié dans son temps ?',o:[['heure','À l\'heure','ok'],['retard','Après le lever du soleil','mid'],['manque','Pas prié','ko']]},
+ {k:'isha',t:'Isha',s:'à la mosquée ?',o:[['mosquee','À la mosquée','ok'],['maison','À l\'heure, maison','mid'],['manque','Pas à l\'heure','ko']]},
+ {k:'ecrans',t:'Téléphone hors de la chambre',s:'à 22 h 30',o:[['oui','Oui','ok'],['non','Non','ko']]},
+ {k:'coucher',t:'Coucher',s:'lumière éteinte à l\'heure prévue',o:[['oui','Oui','ok'],['non','Non','ko']]}
+];
+const alarmFor=i=>i<=14?'6 h 15':i<=28?'6 h 00':'5 h 30';
+const bedFor=i=>i<=28?'23 h':'22 h 30';
+const FRI=['2026-11-20','2026-11-27','2026-12-04','2026-12-11','2026-12-18','2026-12-25','2027-01-01'];
+
+/* ---------- stockage local + synchro GitHub ---------- */
+const LS={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const emptyJ=()=>({days:{},weeks:{},remarques:[],todosDone:{}});
+let J=Object.assign(emptyJ(),LS.get('mh-journal',{}));
+let C=LS.get('mh-coach',{messages:[],todos:[],lus:[]});
+let cfg=LS.get('mh-cfg',{owner:'abdelguero',repo:'muhasaba-data',token:''});
+let dirty=LS.get('mh-dirty',false),jSha=null,busy=false,pushT;
+
+const b64e=s=>{const b=new TextEncoder().encode(s);let o='';for(let i=0;i<b.length;i+=8192)o+=String.fromCharCode(...b.subarray(i,i+8192));return btoa(o)};
+const b64d=s=>new TextDecoder().decode(Uint8Array.from(atob(s.replace(/\n/g,'')),c=>c.charCodeAt(0)));
+async function gh(path,opt={}){
+  const r=await fetch(`https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${path}`+(opt.method?'':'?t='+Date.now()),{...opt,cache:'no-store',headers:{'Authorization':'Bearer '+cfg.token,'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28',...(opt.body?{'Content-Type':'application/json'}:{})}});
+  return r;
+}
+async function readFile(path){const r=await gh(path);if(r.status===404)return{sha:null,data:null};if(!r.ok)throw r.status;const j=await r.json();return{sha:j.sha,data:JSON.parse(b64d(j.content))}}
+const newer=(a,b)=>!a?b:!b?a:((a.maj||'')>=(b.maj||'')?a:b);
+function merge(remote,local){
+  const o=emptyJ();remote=Object.assign(emptyJ(),remote||{});
+  for(const k of new Set([...Object.keys(remote.days),...Object.keys(local.days)]))o.days[k]=newer(local.days[k],remote.days[k]);
+  for(const k of new Set([...Object.keys(remote.weeks),...Object.keys(local.weeks)]))o.weeks[k]=newer(local.weeks[k],remote.weeks[k]);
+  const seen=new Set();o.remarques=[...local.remarques,...remote.remarques].filter(r=>!seen.has(r.at)&&seen.add(r.at)).sort((a,b)=>b.at.localeCompare(a.at));
+  o.todosDone={...remote.todosDone,...local.todosDone};
+  return o;
+}
+function status(t){$('sync').textContent=t}
+function persist(){LS.set('mh-journal',J);LS.set('mh-dirty',dirty)}
+async function sync(){
+  if(!cfg.token){status('○ Non connecté : tes fiches restent sur cet appareil. Ouvre « Connexion » en bas.');return}
+  if(busy||!navigator.onLine){if(!navigator.onLine)status(dirty?'○ Hors connexion · synchro en attente':'○ Hors connexion');return}
+  busy=true;status('↻ Synchronisation…');
+  try{
+    const c=await readFile('coach.json');if(c.data){C=c.data;LS.set('mh-coach',C)}
+    for(let attempt=0;attempt<3;attempt++){
+      const f=await readFile('journal.json');jSha=f.sha;
+      if(!dirty&&f.data){J=Object.assign(emptyJ(),f.data);break}
+      J=dirty?merge(f.data,J):J;
+      if(!dirty&&!f.data)break;
+      const r=await gh('journal.json',{method:'PUT',body:JSON.stringify({message:'Fiche '+TODAY,content:b64e(JSON.stringify(J,null,1)),...(jSha?{sha:jSha}:{})})});
+      if(r.ok){dirty=false;break}
+      if(r.status!==409&&r.status!==422)throw r.status;
+    }
+    persist();status(dirty?'○ Synchro en attente':'✓ Synchronisé · ton coach voit tes fiches');
+  }catch(e){status('⚠ Synchro impossible ('+e+'). Vérifie le jeton dans « Connexion ».')}
+  busy=false;all();drawCoach();drawTodos();drawRemarks();
+}
+function changed(){dirty=true;persist();status('○ Modifications enregistrées sur l\'appareil…');clearTimeout(pushT);pushT=setTimeout(sync,1500)}
+addEventListener('online',sync);
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')sync()});
+
+/* ---------- rendu ---------- */
+function st(d){if(!d||(!d.fajr&&!d.isha))return null;const f=d.fajr==='heure',i=d.isha==='mosquee';return f&&i?'full':(f||i)?'half':'miss'}
+function drawBeads(){
+  $('jour').innerHTML='J'+tIdx+' <small>/ 40</small>';
+  let h='';
+  for(let i=1;i<=N;i++){const ds=addDays(START,i-1);let c=st(J.days[ds])||(i<=tIdx?'todo':'');if(i===tIdx)c+=' today';if(ds===sel)c+=' sel';
+    h+=`<button class="bead ${c}" data-d="${ds}" aria-label="Jour ${i}, ${fmt(ds)}"></button>`}
+  $('beads').innerHTML=h;
+}
+function drawDay(){
+  const i=idx(sel),d=J.days[sel]||{};
+  $('dlabel').textContent='J'+i+' · '+fmt(sel);
+  $('prev').disabled=i<=1;$('next').disabled=i>=tIdx;
+  $('alarm').innerHTML=`⏰ Réveil : <b>${alarmFor(i)}</b>, alarme loin du lit · Coucher : <b>${bedFor(i)}</b>`;
+  $('qs').innerHTML=Q.map(q=>`<div class="q"><p>${q.t} <span>${q.s}</span></p><div class="opts">${q.o.map(([v,l,c])=>`<button class="opt ${c}" data-k="${q.k}" data-v="${v}" aria-pressed="${d[q.k]===v}">${l}</button>`).join('')}</div></div>`).join('');
+  if(document.activeElement!==$('note'))$('note').value=d.note||'';
+}
+const inProg=k=>idx(k)>=1&&idx(k)<=N;
+const count=f=>Object.entries(J.days).filter(([k,d])=>inProg(k)&&f(d)).length;
+function drawStats(){
+  const fj=count(d=>d.fajr==='heure'),is=count(d=>d.isha==='mosquee'),ec=count(d=>d.ecrans==='oui'),filled=count(d=>d.fajr||d.isha);
+  const left=N-tIdx+(J.days[TODAY]&&J.days[TODAY].fajr?0:1);
+  let streak=0;for(let i=tIdx;i>=1;i--){const d=J.days[addDays(START,i-1)];if(d&&d.fajr==='heure')streak++;else if(i===tIdx&&!(d&&d.fajr))continue;else break}
+  const bar=(v,g)=>`<div class="bar"><div style="width:${Math.min(100,v/N*100)}%"></div><em style="left:${g/N*100}%"></em></div>`;
+  const need=(v,g)=>v>=g?'Objectif atteint, continue.':`Encore ${g-v} sur les ${Math.max(left,0)} jours restants.`;
+  $('stats').innerHTML=`
+   <div class="stat"><div class="row"><span>Fajr à l'heure</span><b>${fj} / 30</b></div>${bar(fj,30)}<p class="small">${need(fj,30)} Série : ${streak} jour${streak>1?'s':''}.</p></div>
+   <div class="stat"><div class="row"><span>Isha à la mosquée</span><b>${is} / 28</b></div>${bar(is,28)}<p class="small">${need(is,28)}</p></div>
+   <div class="stat"><div class="row"><span>Téléphone hors chambre</span><b>${ec} / ${filled}</b></div><p class="small">Le levier n°1 pour réussir Fajr.</p></div>
+   <div class="stat"><div class="row"><span>Fiches remplies</span><b>${filled} / ${tIdx}</b></div>${filled<tIdx?'<p class="small">Touche un grain en pointillés pour remplir ce jour.</p>':''}</div>`;
+}
+function drawCoach(){const m=C.messages||[];$('coach').innerHTML=m.length?m.slice().reverse().slice(0,4).map(x=>`<div class="msg"><h3>${esc(x.title)}</h3><time>${esc(x.date)}</time><p>${esc(x.text)}</p></div>`).join(''):'<p class="small">Le premier message arrive dès la connexion.</p>'}
+function drawTodos(){const t=C.todos||[];$('todos').innerHTML=t.length?t.map(x=>{const done=!!J.todosDone[x.id];return`<label class="todo ${done?'done':''}"><input type="checkbox" data-id="${esc(x.id)}" ${done?'checked':''}><span>${esc(x.text)}${x.due?`<small>Avant le ${esc(x.due)}</small>`:''}</span></label>`}).join(''):'<p class="small">Rien pour l\'instant.</p>'}
+function drawRemarks(){const lus=new Set(C.lus||[]);$('rqList').innerHTML=J.remarques.slice(0,3).map(r=>`<div class="msg" style="border-color:var(--green)"><time>${esc(r.date)}${lus.has(r.at)?' · lu par le coach':''}</time><p>${esc(r.text)}</p></div>`).join('')}
+let wSel=FRI.findIndex(f=>f>=TODAY);if(wSel<0)wSel=FRI.length-1;
+function drawWeek(){
+  const f=FRI[wSel],from=addDays(f,-6),w=J.weeks[f]||{};
+  const ds=[];for(let k=0;k<7;k++){const s=addDays(from,k);if(inProg(s))ds.push(s)}
+  const n=ds.length,c=fn=>ds.filter(s=>J.days[s]&&fn(J.days[s])).length;
+  $('wlabel').textContent='Vendredi '+new Date(f+'T12:00:00').toLocaleDateString('fr-FR',{day:'numeric',month:'long'});
+  $('wkHint').textContent=`Après Isha, 15 minutes. Semaine ${wSel+1} sur ${FRI.length} (${n} jour${n>1?'s':''} du programme).`;
+  $('wprev').disabled=wSel===0;$('wnext').disabled=wSel===FRI.length-1;
+  $('wkStats').innerHTML=`<div><b>${c(d=>d.fajr==='heure')}/${n}</b><span>Fajr</span></div><div><b>${c(d=>d.isha==='mosquee')}/${n}</b><span>Isha mosquée</span></div><div><b>${c(d=>d.ecrans==='oui')}/${n}</b><span>Téléphone</span></div>`;
+  if(document.activeElement!==$('wgood'))$('wgood').value=w.good||'';
+  if(document.activeElement!==$('wadj'))$('wadj').value=w.adj||'';
+  $('wbin').innerHTML=[['oui','Oui','ok'],['non','Pas encore','ko']].map(([v,l,c])=>`<button class="opt ${c}" data-v="${v}" aria-pressed="${w.binome===v}">${l}</button>`).join('');
+}
+function all(){drawBeads();drawDay();drawStats();drawWeek()}
+
+/* ---------- événements ---------- */
+let noteT,wT;
+const stamp=el=>{el.textContent='Enregistré ✓';setTimeout(()=>{el.textContent=''},1800)};
+function saveDay(p){J.days[sel]={...(J.days[sel]||{}),...p,date:sel,maj:new Date().toISOString()};all();changed();stamp($('saved'))}
+$('qs').addEventListener('click',e=>{const b=e.target.closest('.opt');if(!b)return;const cur=(J.days[sel]||{})[b.dataset.k];saveDay({[b.dataset.k]:cur===b.dataset.v?null:b.dataset.v})});
+$('note').addEventListener('input',()=>{clearTimeout(noteT);noteT=setTimeout(()=>saveDay({note:$('note').value}),800)});
+$('prev').onclick=()=>{sel=addDays(sel,-1);all()};
+$('next').onclick=()=>{sel=addDays(sel,1);all()};
+$('beads').addEventListener('click',e=>{const b=e.target.closest('.bead');if(!b||idx(b.dataset.d)>tIdx)return;sel=b.dataset.d;all();$('dayCard').scrollIntoView({behavior:'smooth',block:'start'})});
+function saveWeek(p){const f=FRI[wSel];J.weeks[f]={...(J.weeks[f]||{}),...p,vendredi:f,maj:new Date().toISOString()};changed();stamp($('wsaved'))}
+['wgood','wadj'].forEach(id=>$(id).addEventListener('input',()=>{clearTimeout(wT);wT=setTimeout(()=>saveWeek({good:$('wgood').value,adj:$('wadj').value}),800)}));
+$('wbin').addEventListener('click',e=>{const b=e.target.closest('.opt');if(!b)return;saveWeek({binome:b.dataset.v});drawWeek()});
+$('wprev').onclick=()=>{wSel--;drawWeek()};$('wnext').onclick=()=>{wSel++;drawWeek()};
+$('todos').addEventListener('change',e=>{const id=e.target.dataset.id;if(!id)return;if(e.target.checked)J.todosDone[id]=TODAY;else delete J.todosDone[id];drawTodos();changed()});
+$('rqSend').onclick=()=>{const t=$('rq').value.trim();if(!t)return;J.remarques.unshift({text:t,date:TODAY,at:new Date().toISOString()});$('rq').value='';drawRemarks();changed();stamp($('rqSaved'))};
+
+/* connexion */
+$('cOwner').value=cfg.owner;$('cRepo').value=cfg.repo;$('cToken').value=cfg.token?'••••••••':'';
+if(!cfg.token)$('cfgBox').open=true;
+$('cSave').onclick=async()=>{
+  const tok=$('cToken').value.trim();
+  cfg={owner:$('cOwner').value.trim(),repo:$('cRepo').value.trim(),token:tok&&!tok.startsWith('•')?tok:cfg.token};
+  $('cMsg').textContent='Test en cours…';
+  try{const r=await fetch(`https://api.github.com/repos/${cfg.owner}/${cfg.repo}`,{headers:{'Authorization':'Bearer '+cfg.token,'Accept':'application/vnd.github+json'}});
+    if(!r.ok)throw r.status;LS.set('mh-cfg',cfg);$('cToken').value='••••••••';$('cMsg').textContent='Connecté ✓';dirty=true;persist();sync()}
+  catch(e){$('cMsg').textContent='Échec ('+e+') : vérifie le compte, le dépôt et le jeton.'}
+};
+$('cForget').onclick=()=>{cfg.token='';LS.set('mh-cfg',cfg);$('cToken').value='';$('cMsg').textContent='Jeton supprimé de cet appareil.';sync()};
+
+/* installation */
+const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
+let deferred=null;
+if(!standalone){
+  const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);
+  $('installCard').style.display='block';
+  $('installTxt').textContent=ios?'Sur iPhone : ouvre cette page dans Safari, touche le bouton Partager, puis « Sur l\'écran d\'accueil ».':'Sur Android : touche « Installer » ci-dessous, ou le menu ⋮ de Chrome puis « Installer l\'application ».';
+}
+addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferred=e;$('installBtn').style.display='inline-block'});
+$('installBtn').onclick=async()=>{if(!deferred)return;deferred.prompt();await deferred.userChoice;deferred=null;$('installBtn').style.display='none'};
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+
+all();drawCoach();drawTodos();drawRemarks();sync();
+}
+</script>
+</body>
+</html>

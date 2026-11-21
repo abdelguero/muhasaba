@@ -1,6 +1,6 @@
 // Cache de l'application pour l'ouverture hors connexion.
 // Les appels à api.github.com ne sont jamais mis en cache.
-const CACHE = 'muhasaba-v2';
+const CACHE = 'muhasaba-v3';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
@@ -14,7 +14,7 @@ self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET' || u.origin !== location.origin) return;
   // Réseau d'abord (pour recevoir les mises à jour), cache si hors connexion.
   e.respondWith(
-    fetch(e.request).then(r => {
+    fetch(e.request,{cache:'no-store'}).then(r => {
       const copy = r.clone();
       caches.open(CACHE).then(c => c.put(e.request, copy));
       return r;

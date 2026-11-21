@@ -149,7 +149,7 @@ footer p{max-width:640px;margin:6px auto}.ar{font-size:20px}
   <p><b>Version minimum :</b> Fajr dans son temps, même seul, même court. Si pas de mosquée, Isha à l'heure à la maison. Jamais deux jours ratés de suite.</p>
   <p class="ar" lang="ar" dir="rtl">اللَّهُمَّ أَعِنِّي عَلَى ذِكْرِكَ وَشُكْرِكَ وَحُسْنِ عِبَادَتِكَ</p>
   <p class="small">Ô Allah, aide-moi à T'évoquer, à Te remercier et à bien T'adorer.</p>
-  <p class="small">Version 3</p>
+  <p class="small">Version 4</p>
 </footer>
 
 <script>
@@ -170,7 +170,7 @@ let sel=addDays(START,tIdx-1);
 const Q=[
  {k:'fajr',t:'Fajr',s:'prié dans son temps ?',o:[['heure','À l\'heure','ok'],['retard','Après le lever du soleil','mid'],['manque','Pas prié','ko']]},
  {k:'isha',t:'Isha',s:'à la mosquée ?',o:[['mosquee','À la mosquée','ok'],['maison','À l\'heure, maison','mid'],['manque','Pas à l\'heure','ko']]},
- {k:'ecrans',t:'Téléphone hors de la chambre',s:'à 22 h 30',o:[['oui','Oui','ok'],['non','Non','ko']]},
+ {k:'ecrans',t:'Écrans coupés à 22 h 30',s:'Temps d\'arrêt respecté, téléphone posé en charge',o:[['oui','Oui','ok'],['non','Non','ko']]},
  {k:'coucher',t:'Coucher',s:'lumière éteinte à l\'heure prévue',o:[['oui','Oui','ok'],['non','Non','ko']]}
 ];
 const alarmFor=i=>i<=14?'6 h 15':i<=28?'6 h 00':'5 h 30';
@@ -239,7 +239,7 @@ function drawDay(){
   const i=idx(sel),d=J.days[sel]||{};
   $('dlabel').textContent='J'+i+' · '+fmt(sel);
   $('prev').disabled=i<=1;$('next').disabled=i>=tIdx;
-  $('alarm').innerHTML=`⏰ Réveil : <b>${alarmFor(i)}</b>, alarme loin du lit · Coucher : <b>${bedFor(i)}</b>`;
+  $('alarm').innerHTML=`⏰ Réveil : <b>${alarmFor(i)}</b>, alarme en vibration, Répéter désactivé · Coucher : <b>${bedFor(i)}</b>`;
   $('qs').innerHTML=Q.map(q=>`<div class="q"><p>${q.t} <span>${q.s}</span></p><div class="opts">${q.o.map(([v,l,c])=>`<button class="opt ${c}" data-k="${q.k}" data-v="${v}" aria-pressed="${d[q.k]===v}">${l}</button>`).join('')}</div></div>`).join('');
   if(document.activeElement!==$('note'))$('note').value=d.note||'';
 }
@@ -254,7 +254,7 @@ function drawStats(){
   $('stats').innerHTML=`
    <div class="stat"><div class="row"><span>Fajr à l'heure</span><b>${fj} / 30</b></div>${bar(fj,30)}<p class="small">${need(fj,30)} Série : ${streak} jour${streak>1?'s':''}.</p></div>
    <div class="stat"><div class="row"><span>Isha à la mosquée</span><b>${is} / 28</b></div>${bar(is,28)}<p class="small">${need(is,28)}</p></div>
-   <div class="stat"><div class="row"><span>Téléphone hors chambre</span><b>${ec} / ${filled}</b></div><p class="small">Le levier n°1 pour réussir Fajr.</p></div>
+   <div class="stat"><div class="row"><span>Écrans coupés à 22 h 30</span><b>${ec} / ${filled}</b></div><p class="small">Le levier n°1 pour réussir Fajr.</p></div>
    <div class="stat"><div class="row"><span>Fiches remplies</span><b>${filled} / ${tIdx}</b></div>${filled<tIdx?'<p class="small">Touche un grain en pointillés pour remplir ce jour.</p>':''}</div>`;
 }
 function drawCoach(){const m=C.messages||[];$('coach').innerHTML=m.length?m.slice().reverse().slice(0,4).map(x=>`<div class="msg"><h3>${esc(x.title)}</h3><time>${esc(x.date)}</time><p>${esc(x.text)}</p></div>`).join(''):'<p class="small">Le premier message arrive dès la connexion.</p>'}
@@ -268,7 +268,7 @@ function drawWeek(){
   $('wlabel').textContent='Vendredi '+new Date(f+'T12:00:00').toLocaleDateString('fr-FR',{day:'numeric',month:'long'});
   $('wkHint').textContent=`Après Isha, 15 minutes. Semaine ${wSel+1} sur ${FRI.length} (${n} jour${n>1?'s':''} du programme).`;
   $('wprev').disabled=wSel===0;$('wnext').disabled=wSel===FRI.length-1;
-  $('wkStats').innerHTML=`<div><b>${c(d=>d.fajr==='heure')}/${n}</b><span>Fajr</span></div><div><b>${c(d=>d.isha==='mosquee')}/${n}</b><span>Isha mosquée</span></div><div><b>${c(d=>d.ecrans==='oui')}/${n}</b><span>Téléphone</span></div>`;
+  $('wkStats').innerHTML=`<div><b>${c(d=>d.fajr==='heure')}/${n}</b><span>Fajr</span></div><div><b>${c(d=>d.isha==='mosquee')}/${n}</b><span>Isha mosquée</span></div><div><b>${c(d=>d.ecrans==='oui')}/${n}</b><span>Écrans</span></div>`;
   if(document.activeElement!==$('wgood'))$('wgood').value=w.good||'';
   if(document.activeElement!==$('wadj'))$('wadj').value=w.adj||'';
   $('wbin').innerHTML=[['oui','Oui','ok'],['non','Pas encore','ko']].map(([v,l,c])=>`<button class="opt ${c}" data-v="${v}" aria-pressed="${w.binome===v}">${l}</button>`).join('');

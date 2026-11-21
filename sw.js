@@ -1,6 +1,6 @@
 // Cache de l'application pour l'ouverture hors connexion.
 // Les appels à api.github.com ne sont jamais mis en cache.
-const CACHE = 'muhasaba-v4';
+const CACHE = 'muhasaba-v5';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
